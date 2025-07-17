@@ -93,7 +93,20 @@
   if name != none {
     emph[(#name)] + " "
   }
-  " " + body + h(1fr) + $square$
+  " " + body
+  // Special case: proof ends in a block equation
+  if "children" in body.fields() {
+    let filtered_children = body.children.filter(child => (
+      child != [ ] and child.func() != parbreak
+    ))
+    let last_elem = filtered_children.last()
+    if last_elem.func() == math.equation and last_elem.block {
+      place(bottom + right)[$square$]
+      return
+    }
+  }
+  // Generic case: proof ends in text
+  h(1fr) + $square$
 }]
 
 // Basic theorem reference style:
